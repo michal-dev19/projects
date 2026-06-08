@@ -1,13 +1,24 @@
 from fastapi import FastAPI, HTTPException
+from fastapi.middleware.cors import CORSMiddleware
+from auth import get_db, router as auth_router
 import sqlite3
 
+
 app = FastAPI()
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
+
+app.include_router(auth_router)
 
 
 # initialise the database
 def init():
-    conn = sqlite3.connect("job_board.db")
-    cursor = conn.cursor()
+    conn, cursor = get_db()
     # create tables users and jobs if they don't already exist
     try:
         cursor.execute(
@@ -17,14 +28,14 @@ def init():
             job_name TEXT,
             company TEXT,
             date_posted TEXT,
-            description TEXT),
-            FOREIGN KEY (user_id) REFERENCES users(id)"""
+            description TEXT,
+            FOREIGN KEY (user_id) REFERENCES users(id))"""
         )
         cursor.execute(
             """CREATE TABLE IF NOT EXISTS users 
             (id INTEGER PRIMARY KEY, 
             full_name TEXT,
-            email TEXT,
+            email TEXT UNIQUE,
             password TEXT, 
             date_of_birth TEXT, 
             current_occupation TEXT)"""
