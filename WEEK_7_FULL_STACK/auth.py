@@ -37,8 +37,8 @@ def create_token(id: str) -> str:
 
 
 # authorises user
-def get_current_user(authorisation: str = Header()):
-    id = authorisation.split(" ")[1]
+def get_current_user(authorization: str = Header()):
+    id = authorization.split(" ")[1]
     try:
         return jwt.decode(id, SECRET_KEY, ALGORITHM)
     except JWTError:
@@ -70,13 +70,13 @@ def login_user(login_info: CreateUser):
     conn, cursor = get_db()
     try:
         cursor.execute(
-            "SELECT id, email, password FROM users WHERE email=?", (login_info.email)
+            "SELECT id, email, password FROM users WHERE email=?", (login_info.email,)
         )
         user_credentials = cursor.fetchone()
         if user_credentials is None:
             raise HTTPException(status_code=400, detail="Bad Request")
         if bcrypt.checkpw(
-            login_info.password.encode("utf-8"), user_credentials[1].encode("utf-8")
+            login_info.password.encode("utf-8"), user_credentials[2].encode("utf-8")
         ):
             conn.close()
             return create_token(str(user_credentials[0]))
