@@ -18,7 +18,7 @@ class CreateUser(BaseModel):
 
 # establish the connection to the db via a helper function
 def get_db():
-    conn = sqlite3.connect("job_board.db")
+    conn = sqlite3.connect("job_board.db", check_same_thread=False)
     cursor = conn.cursor()
     return conn, cursor
 

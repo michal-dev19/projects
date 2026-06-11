@@ -102,4 +102,4 @@ def create_job(job_info: createJob, user=Depends(get_current_user)):
         print(e)
         conn.rollback()
         conn.close()
-        raise HTTPException(status_code=400, detail="job")
+        raise HTTPException(status_code=500, detail="Internal Server Error")
