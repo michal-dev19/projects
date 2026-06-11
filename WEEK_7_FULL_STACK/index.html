@@ -1,16 +1,28 @@
 <!DOCTYPE html>
 <html>
     <head>
-        <script src="web.js"></script>
     </head>
     <body>
-        <input id="registerEmail" type="email"/>
-        <input id="registerPassword" type="password"/>
-        <button onclick="registerUser()">Submit</button>
         <div>
+            <input id="registerEmail" type="email"/>
+            <input id="registerPassword" type="password"/>
+            <button onclick="registerUser()">Submit</button>
         </div>
-        <input id="loginEmail" type="email"/>
-        <input id="loginPassword" type="password"/>
-        <button onclick="loginUser()">Submit</button>
+        <div>
+            <input id="loginEmail" type="email"/>
+            <input id="loginPassword" type="password"/>
+            <button onclick="loginUser()">Submit</button>
+        </div>
+        <div>
+            <input id="jobName" type="text"/>
+            <input id="companyName" type="text"/>
+            <input id="jobDescription" type="text"/>
+            <button onclick="createJob()">Submit</button>
+        </div>
+        <div>
+            <button onclick="displayJobs()">Show jobs</button>
+            <div id="jobListings"></div>
+        </div>
+        <script src="web.js"></script>
     </body>
 </html>

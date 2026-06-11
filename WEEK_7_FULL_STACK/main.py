@@ -41,7 +41,7 @@ def init():
         cursor.execute(
             """CREATE TABLE IF NOT EXISTS jobs
             (id INTEGER PRIMARY KEY,
-            user_id INT
+            user_id INT,
             job_name TEXT,
             company TEXT,
             date_posted TEXT,
@@ -67,7 +67,7 @@ def startup():
 def get_jobs():
     conn, cursor = get_db()
     try:
-        cursor.execute("SELECT * FROM jobs")
+        cursor.execute("SELECT job_name, company, date_posted, description FROM jobs")
         list_of_jobs = cursor.fetchall()
         conn.close()
         return list_of_jobs
