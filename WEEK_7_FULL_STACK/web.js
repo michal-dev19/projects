@@ -1,6 +1,9 @@
 // a temporary storage for user's token
 let userToken = null
 
+// stores the current date 
+const date = new Date().toISOString().slice(0, 10)
+
 // an asynchronous function, to retrieve data from user, package it, POST it to the server and wait for a 'Promise' (response)
 async function registerUser() {
     const response = await fetch(
@@ -44,7 +47,7 @@ async function createJob() {
             "body": JSON.stringify({
                 "job_name": document.getElementById("jobName").value,
                 "company": document.getElementById("companyName").value,
-                "date_posted": Date(),
+                "date_posted": date,
                 "description": document.getElementById("jobDescription").value
             }),
             "method": "POST"
@@ -65,7 +68,7 @@ async function displayJobs() {
                 job_listings += " | "
             }
         }
-        job_listings += '\n'
+        job_listings += "<br>"
     }
     document.getElementById("jobListings").innerHTML = job_listings
 }
