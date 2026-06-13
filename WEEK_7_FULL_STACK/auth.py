@@ -1,6 +1,7 @@
 import bcrypt
 import sqlite3
 from jose import jwt, JWTError
+from database import get_db
 from fastapi import Header, Depends, HTTPException, APIRouter
 from pydantic import BaseModel
 
@@ -14,13 +15,6 @@ ALGORITHM = "HS256"
 class CreateUser(BaseModel):
     email: str
     password: str
-
-
-# establish the connection to the db via a helper function
-def get_db():
-    conn = sqlite3.connect("job_board.db", check_same_thread=False)
-    cursor = conn.cursor()
-    return conn, cursor
 
 
 # hashes input password
@@ -52,7 +46,7 @@ def register_user(register_info: CreateUser):
     try:
         cursor.execute(
             """INSERT INTO users 
-            (email, password) VALUES (?, ?)""",
+            (email, password) VALUES (%s, %s)""",
             (register_info.email, hash_password(register_info.password)),
         )
         conn.commit()
@@ -70,7 +64,7 @@ def login_user(login_info: CreateUser):
     conn, cursor = get_db()
     try:
         cursor.execute(
-            "SELECT id, email, password FROM users WHERE email=?", (login_info.email,)
+            "SELECT id, email, password FROM users WHERE email=%s", (login_info.email,)
         )
         user_credentials = cursor.fetchone()
         if user_credentials is None:

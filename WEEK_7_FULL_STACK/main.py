@@ -1,18 +1,21 @@
 from fastapi import FastAPI, HTTPException, Depends
 from pydantic import BaseModel
-from fastapi.middleware.cors import CORSMiddleware
-from auth import get_db, get_current_user, router as auth_router
+from fastapi.responses import FileResponse
+from fastapi.staticfiles import StaticFiles
+from database import get_db
+from auth import get_current_user, router as auth_router
 import sqlite3
 
 
 app = FastAPI()
 
-app.add_middleware(
-    CORSMiddleware,
-    allow_origins=["*"],
-    allow_methods=["*"],
-    allow_headers=["*"],
-)
+app.mount("/static", StaticFiles(directory="static"))
+
+
+@app.get("/")
+def base():
+    return FileResponse("index.html")
+
 
 app.include_router(auth_router)
 
@@ -31,7 +34,7 @@ def init():
     try:
         cursor.execute(
             """CREATE TABLE IF NOT EXISTS users 
-            (id INTEGER PRIMARY KEY, 
+            (id SERIAL PRIMARY KEY, 
             full_name TEXT,
             email TEXT UNIQUE,
             password TEXT, 
@@ -40,7 +43,7 @@ def init():
         )
         cursor.execute(
             """CREATE TABLE IF NOT EXISTS jobs
-            (id INTEGER PRIMARY KEY,
+            (id SERIAL PRIMARY KEY,
             user_id INT,
             job_name TEXT,
             company TEXT,
@@ -86,7 +89,7 @@ def create_job(job_info: createJob, user=Depends(get_current_user)):
             """INSERT INTO jobs 
             (user_id, job_name, company, date_posted, description)
             VALUES
-            (?, ?, ?, ?, ?)""",
+            (%s, %s, %s, %s, %s)""",
             (
                 user["sub"],
                 job_info.job_name,
